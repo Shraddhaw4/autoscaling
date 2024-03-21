@@ -47,7 +47,7 @@ pipeline {
                             $class: 'AmazonWebServicesCredentialsBinding', 
                             accessKeyVariable: 'AWS_ACCESS_KEY_ID', 
                             secretKeyVariable: 'AWS_SECRET_ACCESS_KEY', 
-                            credentialsId: '${cred}']]) 
+                            credentialsId: "${cred}"]]) 
                             {
                                 def awsCliCommand = "aws autoscaling describe-auto-scaling-groups --query 'AutoScalingGroups[?Tags[?Key==`type` && Value=='${fun}']].AutoScalingGroupName' --output text"
                                 def asgNames = sh(script: awsCliCommand, returnStdout: true).trim()
