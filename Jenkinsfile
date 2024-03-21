@@ -11,7 +11,7 @@ pipeline {
                 script {
                     try {
                         // Execute AWS CLI command to describe instances launched by the autoscaling group
-                        def awsCliCommand = "aws autoscaling describe-auto-scaling-instances --query 'AutoScalingInstances[?AutoScalingGroupName==`asg-test`].[InstanceId]' --output text"
+                        def awsCliCommand = "aws autoscaling describe-auto-scaling-instances --query 'AutoScalingInstances[?AutoScalingGroupName==`testasg`].[InstanceId]' --output text"
                         def instanceIds = sh(script: awsCliCommand, returnStdout: true).trim()
  
                         // Split the output into individual instance IDs
