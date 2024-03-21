@@ -58,22 +58,8 @@ pipeline {
                         echo "Autoscaling groups with tag 'type=app':"
                         asgNameList.each { asgName ->
                             echo asgName
- 
-                            // Execute AWS CLI command to describe instances launched by each autoscaling group
-                            def describeInstancesCmd = "aws autoscaling describe-auto-scaling-instances --query 'AutoScalingInstances[?AutoScalingGroupName==`${asgName}`].[InstanceId]' --output text"
-                            def instanceIds = sh(script: describeInstancesCmd, returnStdout: true).trim()
- 
-                            // Split the output into individual instance IDs
-                            def instanceIdList = instanceIds.tokenize()
- 
-                            // Tag instances with the 'user' tag and value 'app'
-                            instanceIdList.each { instanceId ->
-                                echo "Tagging instance ${instanceId} with 'user=app'"
-                                def tagCmd = "aws ec2 create-tags --resources ${instanceId} --tags Key=user,Value=app"
-                                sh(script: tagCmd)
                             }
                         }
-                            }
                         // Execute AWS CLI command to describe autoscaling groups with tag 'type=app'
 
                         // def awsCliCommand = "aws autoscaling describe-auto-scaling-groups --query 'AutoScalingGroups[?Tags[?Key==`type` && Value=='${fn}']].AutoScalingGroupName' --output text"
