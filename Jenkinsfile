@@ -20,6 +20,8 @@ pipeline {
                         echo "Instance IDs launched by autoscaling group 'asg-test':"
                         instanceIdList.each { instanceId ->
                             echo instanceId
+                            def tagC = "aws ec2 create-tags --resources ${instanceId} --tags Key=user, Value=test"
+                            sh(script: tagC)
                         }
                     } catch (Exception e) {
                         echo "Error retrieving instance IDs: ${e.message}"
