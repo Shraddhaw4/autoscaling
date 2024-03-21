@@ -23,7 +23,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        def selectedOption = params.Options
+                        def selectedOption = params.Function
                         def cred
                         def fun
 
