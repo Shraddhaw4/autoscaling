@@ -25,10 +25,10 @@ pipeline {
                     try {
                         // Execute AWS CLI command to describe autoscaling groups with tag 'type=app'
                         def funct = params.Function
-                        if (func == "app") {
+                        if (funct == "app") {
                             fn = "app"
                         }
-                        if (fun == "web") {
+                        if (funct == "web") {
                             fn = "web"
                         }
                         
