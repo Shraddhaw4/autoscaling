@@ -16,7 +16,6 @@ pipeline {
                 echo "User is : ${USER_ID}"
             }
         }
-            stages {
         stage('Retrieve Autoscaling Groups') {
             steps {
                 script {
@@ -54,4 +53,4 @@ pipeline {
         }
     }
 }
-}
+
