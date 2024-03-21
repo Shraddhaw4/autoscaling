@@ -49,17 +49,10 @@ pipeline {
                             secretKeyVariable: 'AWS_SECRET_ACCESS_KEY', 
                             credentialsId: "${cred}"]]) 
                             {
-                        def awsCliCommand = "aws autoscaling describe-auto-scaling-groups --query 'AutoScalingGroups[?Tags[?Key==`type` && Value=='${fun}']].AutoScalingGroupName' --output text"
-                        def asgNames = sh(script: awsCliCommand, returnStdout: true).trim()
- 
-                        // Split the output into individual autoscaling group names
-                        def asgNameList = asgNames.tokenize()
- 
-                        echo "Autoscaling groups with tag 'type=app':"
-                        asgNameList.each { asgName ->
-                            echo asgName
+                                def awsCliCommand = "aws autoscaling describe-auto-scaling-groups --query 'AutoScalingGroups[?Tags[?Key==`type` && Value=='${fun}']].AutoScalingGroupName' --output text"
+                                def asgNames = sh(script: awsCliCommand, returnStdout: true).trim()
+                                echo asgNames
                             }
-                        }
                         // Execute AWS CLI command to describe autoscaling groups with tag 'type=app'
 
                         // def awsCliCommand = "aws autoscaling describe-auto-scaling-groups --query 'AutoScalingGroups[?Tags[?Key==`type` && Value=='${fn}']].AutoScalingGroupName' --output text"
