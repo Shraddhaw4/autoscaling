@@ -16,25 +16,38 @@ pipeline {
                 echo "User is : ${USER_ID}"
             }
         }
-        stage('Retrieve Instance IDs') {
+            stages {
+        stage('Retrieve Autoscaling Groups') {
             steps {
                 script {
                     try {
-                        // Execute AWS CLI command to describe instances launched by the autoscaling group
-                        def awsCliCommand = "aws autoscaling describe-auto-scaling-instances --query 'AutoScalingInstances[?AutoScalingGroupName==`testasg`].[InstanceId]' --output text"
-                        def instanceIds = sh(script: awsCliCommand, returnStdout: true).trim()
+                        // Execute AWS CLI command to describe autoscaling groups with tag 'type=app'
+                        def awsCliCommand = "aws autoscaling describe-auto-scaling-groups --query 'AutoScalingGroups[?Tags[?Key==`type` && Value==`app`]].AutoScalingGroupName' --output text"
+                        def asgNames = sh(script: awsCliCommand, returnStdout: true).trim()
  
-                        // Split the output into individual instance IDs
-                        def instanceIdList = instanceIds.tokenize()
+                        // Split the output into individual autoscaling group names
+                        def asgNameList = asgNames.tokenize()
  
-                        echo "Instance IDs launched by autoscaling group 'asg-test':"
-                        instanceIdList.each { instanceId ->
-                            echo instanceId
-                            def tagC = "aws ec2 create-tags --resources ${instanceId} --tags Key=user,Value=${USER_ID}"
-                            sh(script: tagC)
+                        echo "Autoscaling groups with tag 'type=app':"
+                        asgNameList.each { asgName ->
+                            echo asgName
+ 
+                            // Execute AWS CLI command to describe instances launched by each autoscaling group
+                            def describeInstancesCmd = "aws autoscaling describe-auto-scaling-instances --query 'AutoScalingInstances[?AutoScalingGroupName==`${asgName}`].[InstanceId]' --output text"
+                            def instanceIds = sh(script: describeInstancesCmd, returnStdout: true).trim()
+ 
+                            // Split the output into individual instance IDs
+                            def instanceIdList = instanceIds.tokenize()
+ 
+                            // Tag instances with the 'user' tag and value 'app'
+                            instanceIdList.each { instanceId ->
+                                echo "Tagging instance ${instanceId}"
+                                def tagCmd = "aws ec2 create-tags --resources ${instanceId} --tags Key=user,Value=${USER_ID}"
+                                sh(script: tagCmd)
+                            }
                         }
                     } catch (Exception e) {
-                        echo "Error retrieving instance IDs: ${e.message}"
+                        echo "Error retrieving or tagging autoscaling groups and instances: ${e.message}"
                     }
                 }
             }
