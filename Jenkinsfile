@@ -6,6 +6,16 @@ pipeline {
     }
  
     stages {
+        stage('User') {
+            steps {
+                wrap([$class: 'BuildUser']) {
+                  script {
+                     USER_ID = "${BUILD_USER}"
+                  }
+                }
+                echo "User is : ${USER_ID}"
+            }
+        }
         stage('Retrieve Instance IDs') {
             steps {
                 script {
@@ -20,7 +30,7 @@ pipeline {
                         echo "Instance IDs launched by autoscaling group 'asg-test':"
                         instanceIdList.each { instanceId ->
                             echo instanceId
-                            def tagC = "aws ec2 create-tags --resources ${instanceId} --tags Key=user,Value=test"
+                            def tagC = "aws ec2 create-tags --resources ${instanceId} --tags Key=user,Value=${USER_ID}"
                             sh(script: tagC)
                         }
                     } catch (Exception e) {
