@@ -4,6 +4,9 @@ pipeline {
           AWS_ACCESS_KEY_ID     = credentials('creds')
           AWS_SECRET_ACCESS_KEY = credentials('creds')
     }
+    parameters { 
+        extendedChoice name: 'Function', description: 'Select the function type:', type: 'PT_RADIO', descriptionPropertyValue: 'App,Web,DB,Analytics', value: 'app,web,db,analytics' 
+    }
  
     stages {
         stage('User') {
@@ -21,7 +24,15 @@ pipeline {
                 script {
                     try {
                         // Execute AWS CLI command to describe autoscaling groups with tag 'type=app'
-                        def awsCliCommand = "aws autoscaling describe-auto-scaling-groups --query 'AutoScalingGroups[?Tags[?Key==`type` && Value==`app`]].AutoScalingGroupName' --output text"
+                        def funct = params.Function
+                        if (func == "app") {
+                            fn = "app"
+                        }
+                        if (fun == "web") {
+                            fn = "web"
+                        }
+                        
+                        def awsCliCommand = "aws autoscaling describe-auto-scaling-groups --query 'AutoScalingGroups[?Tags[?Key==`type` && Value==${fn}]].AutoScalingGroupName' --output text"
                         def asgNames = sh(script: awsCliCommand, returnStdout: true).trim()
  
                         // Split the output into individual autoscaling group names
