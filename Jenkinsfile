@@ -49,7 +49,7 @@ pipeline {
                             secretKeyVariable: 'AWS_SECRET_ACCESS_KEY', 
                             credentialsId: "${cred}"]]) 
                             {
-                                def asgNames = sh(script: "aws autoscaling describe-auto-scaling-groups --query 'AutoScalingGroups[?Tags[?Key==`type` && Value=='${fun}']].AutoScalingGroupName' --output text", returnStdout: true).trim()
+                                def asgNames = sh(script: "aws autoscaling describe-auto-scaling-groups --query 'AutoScalingGroups[?Tags[?Key==\`type`\ && Value==\'${fun}\']].AutoScalingGroupName' --output text", returnStdout: true).trim()
                                 echo asgNames
                             }
                         // Execute AWS CLI command to describe autoscaling groups with tag 'type=app'
